@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import SeasonDisplay from './seasonDisplay';
+import Spinner from './Spinner';
 
 // const App= () => {
 //     window.navigator.geolocation.getCurrentPosition(
@@ -11,35 +13,41 @@ import ReactDOM from 'react-dom';
 
 class App extends React.Component {
 
-    constructor(props) {
-            super(props);
-            // this is the only time we do direct assignment to this state
-            this.state = {lat: null, errorMessage: ''};
+    // constructor(props) {
+    //         super(props);
+    //         // this is the only time we do direct assignment to this state
+    //         this.state = {lat: null, errorMessage: ''};
+    // }
 
-            window.navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    // We called setstate!!!!
-                    this.setState({lat: position.coords.latitude});
-                },
-                err => {
-                    this.setState({errorMessage: err.message})
-                }
-            );
+    state = {lat: null, errorMessage: ''};
+
+    componentDidMount() {
+        window.navigator.geolocation.getCurrentPosition(
+             // We called setstate!!!!
+            position=> this.setState({lat: position.coords.latitude}),
+            err => this.setState({errorMessage: err.message})
+        );
     }
-    // React says we have to define render !! this is by default required 
-    render() {
-        // return <div> Latitude: {this.state.lat} <br/>
-        //              Error: {this.state.errorMessage} 
-        //        </div>
+
+    renderContent() {
+            // return <div> Latitude: {this.state.lat} <br/>
+            //         Error: {this.state.errorMessage} 
+            //        </div>
 
         if(this.state.errorMessage && !this.state.lat) {
             return <div> Error: {this.state.errorMessage} </div>
         }
         if(!this.state.errorMessage && this.state.lat) {
-            return <div> Latitude: {this.state.lat} </div>
+            return <SeasonDisplay lat= {this.state.lat}></SeasonDisplay>
         }
-         return <div> Loading........ </div>
+         return <Spinner message= "Please accept location request"></Spinner>
+    }
+    // React says we have to define render !! this is by default required 
+    render() {
        
+       return (
+           <div className="border red">{this.renderContent()}</div>
+       )
     }
 }
 
